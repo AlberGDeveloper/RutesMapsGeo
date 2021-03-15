@@ -15,27 +15,38 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, AccesoDatos.Comunicacion {
 
     private GoogleMap mMap;
     private Button miboton;
+    private Button miBoton2;
+    private Button miBoton3;
     private ProgressBar pb;
+    private EditText et;
     LocationManager lm = null;
+    LocationListener oyenteLocalizacion;
     private boolean centrado = false;
     private PolylineOptions ruta = new PolylineOptions();
+    ArrayList<Ubicacion> rutaFinal;
+    private Spinner miSpinner;
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -58,15 +69,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        miboton = findViewById(R.id.mibutton);
-        pb = findViewById(R.id.miprogressBar);
-        pb.setVisibility(View.VISIBLE);
+        miboton = findViewById(R.id.btnarrancar);
+        miSpinner = (Spinner) findViewById(R.id.spinnerRutas);
+        et = findViewById(R.id.miET);
+        //pb = findViewById(R.id.miprogressBar);
+        //pb.setVisibility(View.VISIBLE);
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         miboton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                pb.setVisibility(View.INVISIBLE);
                 comprobarPermisos();
+            }
+        });
+
+        miBoton2 = findViewById(R.id.btonstop);
+        miBoton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                resetearRuta();
             }
         });
 
@@ -75,6 +95,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        List<String> providers = lc.getProviders(true);
 //        Log.d("Proveedores", providers.toString());
     }
+
+    private void resetearRuta() {
+            lm.removeUpdates(oyenteLocalizacion);
+            ruta=new PolylineOptions();
+            mMap.clear();
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void comprobarPermisos() {
         //Esto significa que si no tenemos permiso FINE y tampovo el COARSE, entra en el if y hace
@@ -99,12 +126,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void obtenerUbicacion() {
+        if(!et.getText().toString().isEmpty()){
 
-        LocationListener oyenteLocalizacion = new LocationListener() {
+        }
+        else {
+            Toast.makeText(MapsActivity.this, "Escribe un nombre", Toast.LENGTH_LONG).show();
+        }
+
+
+        oyenteLocalizacion = new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
                 // lm.removeUpdates(this);
                 Log.d("CAMBIANTE", location.getLatitude()+" "+location.getLongitude());
+                //aquí añado la lista, los get location
                 nuevoPuntoRutas(location);
             }
 
@@ -128,15 +163,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void nuevoPuntoRutas(Location location) {
+        rutaFinal = new ArrayList<>();
+        Ubicacion u = new Ubicacion();
+        u.setLatitud(location.getLatitude());
+        u.setLongitud(location.getLongitude());
+        rutaFinal.add(u);
         LatLng point = new LatLng(location.getLatitude(), location.getLongitude());
         ruta.add(point);
         mMap.addPolyline(ruta);
-        //centramos el mapa
+        Rutas r = new Rutas();
+        String nombre =et.getText().toString();
+        r.setNombre(nombre);
+        r.setLista_coordenadas(rutaFinal);
+
         if (centrado == false){
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(point, 8));
             centrado = true;
         }
+        AccesoDatos.subirPuntos(r);
     }
+
+
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -164,5 +212,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
        // pb.setVisibility(View.INVISIBLE);
+    }
+
+
+    @Override
+    public void envioRutaMain(List<Rutas> rutas) {
+        //metemos rutas en el spinner
+        ArrayAdapter<Rutas> miRutaSpn = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, rutas);
+        miSpinner.setAdapter(miRutaSpn);
+
+
     }
 }

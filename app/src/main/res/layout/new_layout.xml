@@ -8,37 +8,80 @@
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="399dp"
-        android:layout_height="489dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintStart_toStartOf="parent"
-        map:layout_constraintTop_toBottomOf="@+id/mibutton"
+        map:layout_constraintTop_toBottomOf="@+id/btnarrancar"
         tools:context=".MapsActivity" />
 
     <Button
-        android:id="@+id/mibutton"
+        android:id="@+id/btnarrancar"
+        android:layout_width="158dp"
+        android:layout_height="51dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginRight="27dp"
+        android:layout_marginBottom="57dp"
+        android:enabled="false"
+        android:text="Comienza la ruta"
+        map:layout_constraintBottom_toTopOf="@+id/map"
+        map:layout_constraintEnd_toStartOf="@+id/btonstop"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toBottomOf="@+id/spinnerRutas" />
+
+    <Button
+        android:id="@+id/btonstop"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="Para la ruta"
+        map:layout_constraintBottom_toBottomOf="@+id/btnarrancar"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toEndOf="@+id/btnarrancar"
+        map:layout_constraintTop_toTopOf="@+id/btnarrancar" />
+
+    <Button
+        android:id="@+id/botongrabar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="13dp"
-        android:layout_marginLeft="13dp"
-        android:layout_marginBottom="43dp"
-        android:enabled="false"
-        android:text="Button"
-        map:layout_constraintBottom_toTopOf="@+id/map"
-        map:layout_constraintStart_toStartOf="@+id/miprogressBar"
-        map:layout_constraintTop_toBottomOf="@+id/miprogressBar" />
-
-    <ProgressBar
-        android:id="@+id/miprogressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="81dp"
-        android:layout_height="82dp"
-        android:layout_marginTop="45dp"
-        android:layout_marginBottom="32dp"
-        map:layout_constraintBottom_toTopOf="@+id/mibutton"
+        android:layout_marginTop="31dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="62dp"
+        android:text="Crea la ruta"
+        map:layout_constraintBottom_toTopOf="@+id/spinnerRutas"
         map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toEndOf="@+id/miET"
+        map:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/miET"
+        android:layout_width="0dp"
+        android:layout_height="58dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="31dp"
+        android:layout_marginEnd="38dp"
+        android:layout_marginRight="38dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        map:layout_constraintEnd_toStartOf="@+id/botongrabar"
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinnerRutas"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="61dp"
+        map:layout_constraintBottom_toTopOf="@+id/btnarrancar"
+        map:layout_constraintEnd_toEndOf="parent"
+        map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toBottomOf="@+id/botongrabar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
